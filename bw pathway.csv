@@ -1,6 +1,6 @@
-﻿Path,Sample,
-/lustre/fengyang/connect/G4/20230419/ASC24_1.mm10.pe.uniq.bw,ASC24_rep2,
-/lustre/fengyang/connect/G4/20230419/ASC24_2.mm10.pe.uniq.bw,ASC24_rep3,
+﻿Path,Sample,Cell type
+/lustre/fengyang/connect/G4/20230419/ASC24_1.mm10.pe.uniq.bw,ASC24_rep2,SC
+/lustre/fengyang/connect/G4/20230419/ASC24_2.mm10.pe.uniq.bw,ASC24_rep3,SC
 /lustre/fengyang/connect/G4/20230419/ASC72_1.mm10.pe.uniq.bw,ASC72_rep2,SC
 /lustre/fengyang/connect/G4/20230419/ASC72_2.mm10.pe.uniq.bw,ASC72_rep3,SC
 /lustre/fengyang/connect/G4/20230419/ASC48_MAX.mm10.pe.uniq.bw,ASC48_MAX_rep1,SC
