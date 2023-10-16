@@ -41,7 +41,7 @@ library(ggplot2)
 # 现在就是用的前面做DESeq的时候的resdata。
 resdata$change <- as.factor(
 	ifelse(
-		resdata$padj<0.01 & abs(resdata$log2FoldChange)>1,
+		resdata$padj<0.05 & abs(resdata$log2FoldChange)>1,
 		ifelse(resdata$log2FoldChange>1, "Up", "Down"),
 		"NoDiff"
 	)
@@ -50,7 +50,7 @@ resdata<-resdata[complete.cases(resdata),]
 
 valcano <- ggplot(data=resdata, aes(x=log2FoldChange, y=-log10(padj), color=change)) + 
 	geom_point(alpha=0.8, size=1) + 
-	theme_bw(base_size=15) + 
+	theme_bw(base_size=10) + 
 	theme(
 		panel.grid.minor=element_blank(),
 		panel.grid.major=element_blank()
@@ -58,26 +58,48 @@ valcano <- ggplot(data=resdata, aes(x=log2FoldChange, y=-log10(padj), color=chan
 	ggtitle("DESeq2 Valcano") + 
 	# scale_color_manual(name="", values=c("red", "green", "black"), limits=c("Up", "Down", "NoDiff")) + 
 	geom_vline(xintercept=c(-1, 1), lty=2, col="gray", lwd=0.5) + 
-	geom_hline(yintercept=-log10(0.01), lty=1, col="gray", lwd=0.5)+xlim(-10,10)
+	geom_hline(yintercept=-log10(0.05), lty=1, col="gray", lwd=0.5)+xlim(-10,10)
 pdf("valcano.pdf")
 valcano
 dev.off()
 
 
 # library(ggplot2)
-rld <- rlog(dds)
-pcaData <- plotPCA(rld, intgroup=c("condition", "name"), returnData=T)
-percentVar <- round(100*attr(pcaData, "percentVar"))
-pca <- ggplot(pcaData, aes(PC1, PC2, color=condition, shape=name)) + 
-	geom_point(size=3) + 
-	ggtitle("DESeq2 PCA") + 
-	xlab(paste0("PC1: ", percentVar[1], "% variance")) + 
-	ylab(paste0("PC2: ", percentVar[2], "% variance"))
+vsd <- vst(dds, blind=FALSE)
+pcaData <- plotPCA(vsd, intgroup=c("condition", "type"), returnData=TRUE)
+percentVar <- round(100 * attr(pcaData, "percentVar"))
+pca<-ggplot(pcaData, aes(PC1, PC2, color=condition, shape = type)) +
+geom_point(size=3) +
+xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+ylab(paste0("PC2: ",percentVar[2],"% variance")) +
+geom_text(aes(label=name),vjust=2)
 pdf("PCA.pdf")
 pca
 dev.off()
 
+# rld <- rlog(dds)
+# pcaData <- plotPCA(rld, intgroup=c("condition", "name"), returnData=T)
+# percentVar <- round(100*attr(pcaData, "percentVar"))
+# pca <- ggplot(pcaData, aes(PC1, PC2, color=condition, shape=name)) + 
+# 	geom_point(size=3) + 
+# 	ggtitle("DESeq2 PCA") + 
+# 	xlab(paste0("PC1: ", percentVar[1], "% variance")) + 
+# 	ylab(paste0("PC2: ", percentVar[2], "% variance"))
 
+
+assay(vsd) <- limma::removeBatchEffect(assay(vsd), vsd$type)
+
+pcaData <- plotPCA(vsd, intgroup=c("condition", "type"), returnData=TRUE)
+percentVar <- round(100 * attr(pcaData, "percentVar"))
+pca<-ggplot(pcaData, aes(PC1, PC2, color=condition, shape = type)) +
+geom_point(size=3) +
+xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+ylab(paste0("PC2: ",percentVar[2],"% variance")) +
+geom_text(aes(label=name),vjust=2)
+pdf("PCA_BatchEffectRemoved.pdf")
+pca
+dev.off()
+write.table(assay(vsd),file='pasilla_batchCorrectedVSD.txt',sep="\t",row.names=TRUE,col.names=TRUE)
 # library(pheatmap)
 
 # # select <- order(rowMeans(counts(dds, normalized=T)), decreasing=T)[1:1000]
