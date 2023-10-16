@@ -1,0 +1,1 @@
+featureCounts -a /lustre/home/fengyang/Ref/mm10/gencode.vM25.annotation.gtf -o out.bed ../ctrl_1/01alignment/ctrl_1.bam ../ctrl_2/01alignment/ctrl_2.bam ../ctrl_3/01alignment/ctrl_3.bam ../iko_1/01alignment/iko_1.bam ../iko_2/01alignment/iko_2.bam ../iko_3/01alignment/iko_3.bam -T 10
